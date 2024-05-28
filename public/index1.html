@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form id="loginForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button onclick="login('/MainLogin')">Login</button><br><br>
+        <button onclick="login('/attendance')">Attendance</button><br><br>
+        <button onclick="login('/profile')">Profile</button><br><br>
+        <button onclick="login('/timetable')">timetable</button><br><br>
+        <button onclick="login('/notification')">notification</button><br><br>
+        <button onclick="login('/feedback')">feedback</button><br><br>
+        <button onclick="login('/invoice')">invoice</button><br><br>
+        <button onclick="login('/enrollment')">enrollment</button><br><br>
+        <button id="generate-pdf-btn" >Generate Report PDF</button><br><br>
+    </form>
+
+    <div id="message"></div>
+    
+    <script src="script2.js"></script>
+    <script>
+  document.getElementById('generate-pdf-btn').addEventListener('click', async (event) => {
+    event.preventDefault();
+    try {
+        console.log('Button clicked, making fetch request...');
+        const response = await fetch('/generate-pdf', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Response received:', response);
+
+        if (!response.ok) {
+            console.error('Network response was not ok:', response.statusText);
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        const blob = await response.blob();
+        console.log('Blob created:', blob);
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        console.log('PDF downloaded');
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+    }
+});
+    </script>
+</body>
+</html>
